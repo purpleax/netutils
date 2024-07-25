@@ -42,7 +42,6 @@
                     <div class="dropdown-menu" aria-labelledby="securityDropdown">
                         <a class="dropdown-item" href="#" onclick="showUtility('wafLookup')">WAF Lookup</a>
                         <a class="dropdown-item" href="#" onclick="showUtility('nmap')">Nmap</a>
-                        <a class="dropdown-item" href="#" onclick="showUtility('corsScan')">CORS Scanner</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -151,17 +150,6 @@
                 <button type="submit" class="btn btn-primary">Run Nmap</button>
             </form>
             <pre id="nmapResult" class="result"></pre>
-        </div>
-
-        <div id="corsScanForm" class="utility-form">
-            <form onsubmit="runCorsScan(); return false;">
-                <div class="form-group">
-                    <label for="corsScanAddress">Enter address</label>
-                    <input type="text" class="form-control" id="corsScanAddress" placeholder="Enter address">
-                </div>
-                <button type="submit" class="btn btn-primary">Scan CORS</button>
-            </form>
-            <pre id="corsScanResult" class="result"></pre>
         </div>
 
         <div id="jsonUploadForm" class="utility-form">

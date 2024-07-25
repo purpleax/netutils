@@ -71,41 +71,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     };
 
-    window.runCorsScan = function() {
-        const address = document.getElementById('corsScanAddress').value;
-        fetch('/cors-scan', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ address: address })
-        })
-        .then(response => response.json())
-        .then(result => {
-            const headers = result.headers;
-            const misconfigurations = result.misconfigurations;
-
-            let output = `CORS Headers:\n`;
-            for (const [key, value] of Object.entries(headers)) {
-                output += `${key}: ${value}\n`;
-            }
-
-            output += `\nMisconfigurations:\n`;
-            if (misconfigurations.length === 0) {
-                output += 'None';
-            } else {
-                misconfigurations.forEach(misconfiguration => {
-                    output += `${misconfiguration}\n`;
-                });
-            }
-
-            document.getElementById('corsScanResult').textContent = output;
-        })
-        .catch(error => {
-            document.getElementById('corsScanResult').textContent = `Error: ${error}`;
-        });
-    };
-
     window.uploadJson = function() {
         const fileInput = document.getElementById('jsonFile');
         const file = fileInput.files[0];

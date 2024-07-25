@@ -2,13 +2,19 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
+const path = require('path');
+const { exec } = require('child_process');
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.post('/wafw00f', (req, res) => {
     const address = req.body.address;
@@ -55,36 +61,6 @@ app.get('/headers', (req, res) => {
         headers: headers,
         sourceIp: sourceIp
     });
-});
-
-app.post('/cors-scan', async (req, res) => {
-    const address = req.body.address;
-
-    try {
-        const response = await axios.get(address);
-        const corsHeaders = {
-            'Access-Control-Allow-Origin': response.headers['access-control-allow-origin'] || 'Not present',
-            'Access-Control-Allow-Methods': response.headers['access-control-allow-methods'] || 'Not present',
-            'Access-Control-Allow-Headers': response.headers['access-control-allow-headers'] || 'Not present',
-            'Access-Control-Allow-Credentials': response.headers['access-control-allow-credentials'] || 'Not present'
-        };
-
-        // Check for misconfigurations
-        const misconfigurations = [];
-        if (corsHeaders['Access-Control-Allow-Origin'] === '*') {
-            misconfigurations.push('Wildcard (*) in Access-Control-Allow-Origin header');
-        }
-        if (corsHeaders['Access-Control-Allow-Credentials'] === 'true' && corsHeaders['Access-Control-Allow-Origin'] === '*') {
-            misconfigurations.push('Credentials are allowed with wildcard (*) in Access-Control-Allow-Origin header');
-        }
-
-        res.json({
-            headers: corsHeaders,
-            misconfigurations: misconfigurations
-        });
-    } catch (error) {
-        res.status(500).json({ error: `Error fetching CORS headers: ${error.message}` });
-    }
 });
 
 app.listen(port, () => {
