@@ -1,0 +1,15 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.utility-form {
+    display: none;
+}
+
+.result {
+    background-color: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    white-space: pre-wrap;
+}

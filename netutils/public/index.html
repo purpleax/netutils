@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Utilities</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Network Utilities</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="networkDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Network
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="networkDropdown">
+                        <a class="dropdown-item" href="#" onclick="showUtility('traceroute')">Traceroute</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dnsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        DNS
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dnsDropdown">
+                        <a class="dropdown-item" href="#" onclick="showUtility('lookup')">Lookup</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="securityDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Security
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="securityDropdown">
+                        <a class="dropdown-item" href="#" onclick="showUtility('wafLookup')">WAF Lookup</a>
+                        <a class="dropdown-item" href="#" onclick="showUtility('nmap')">Nmap</a>
+                        <a class="dropdown-item" href="#" onclick="showUtility('corsScan')">CORS Scanner</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="utilitiesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Utilities
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="utilitiesDropdown">
+                        <a class="dropdown-item" href="#" onclick="showUtility('jsonUpload')">JSON Upload</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="infoDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Info
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="infoDropdown">
+                        <a class="dropdown-item" href="#" onclick="showUtility('headers')">Headers</a>
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Sign in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-warning" href="#">Sign up</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5" id="utility-container">
+        <div id="tracerouteForm" class="utility-form">
+            <form onsubmit="runTraceroute(); return false;">
+                <div class="form-group">
+                    <label for="tracerouteAddress">Enter address</label>
+                    <input type="text" class="form-control" id="tracerouteAddress" placeholder="Enter address">
+                </div>
+                <button type="submit" class="btn btn-primary">Traceroute</button>
+            </form>
+            <pre id="tracerouteResult" class="result"></pre>
+        </div>
+
+        <div id="lookupForm" class="utility-form">
+            <form onsubmit="runLookup(); return false;">
+                <div class="form-group">
+                    <label for="lookupAddress">Enter address</label>
+                    <input type="text" class="form-control" id="lookupAddress" placeholder="Enter address">
+                </div>
+                <div class="form-group">
+                    <label for="dnsServer">Custom DNS server (optional)</label>
+                    <input type="text" class="form-control" id="dnsServer" placeholder="Enter DNS server">
+                </div>
+                <div class="form-group">
+                    <label for="recordType">Select DNS Record Type</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="aRecord" value="A">
+                        <label class="form-check-label" for="aRecord">A</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="aaaaRecord" value="AAAA">
+                        <label class="form-check-label" for="aaaaRecord">AAAA</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="cnameRecord" value="CNAME">
+                        <label class="form-check-label" for="cnameRecord">CNAME</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="mxRecord" value="MX">
+                        <label class="form-check-label" for="mxRecord">MX</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="nsRecord" value="NS">
+                        <label class="form-check-label" for="nsRecord">NS</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="recordType" id="txtRecord" value="TXT">
+                        <label class="form-check-label" for="txtRecord">TXT</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Lookup</button>
+            </form>
+            <pre id="lookupResult" class="result"></pre>
+        </div>
+
+        <div id="wafLookupForm" class="utility-form">
+            <form onsubmit="runWafLookup(); return false;">
+                <div class="form-group">
+                    <label for="wafLookupAddress">Enter address</label>
+                    <input type="text" class="form-control" id="wafLookupAddress" placeholder="Enter address">
+                </div>
+                <button type="submit" class="btn btn-primary">WAF Lookup</button>
+            </form>
+            <pre id="wafLookupResult" class="result"></pre>
+        </div>
+
+        <div id="nmapForm" class="utility-form">
+            <form onsubmit="runNmap(); return false;">
+                <div class="form-group">
+                    <label for="nmapAddress">Target hostname</label>
+                    <input type="text" class="form-control" id="nmapAddress" placeholder="Enter target hostname">
+                </div>
+                <div class="form-group">
+                    <label for="nmapFlags">Nmap Flags</label>
+                    <input type="text" class="form-control" id="nmapFlags" placeholder="Enter Nmap flags">
+                </div>
+                <button type="submit" class="btn btn-primary">Run Nmap</button>
+            </form>
+            <pre id="nmapResult" class="result"></pre>
+        </div>
+
+        <div id="corsScanForm" class="utility-form">
+            <form onsubmit="runCorsScan(); return false;">
+                <div class="form-group">
+                    <label for="corsScanAddress">Enter address</label>
+                    <input type="text" class="form-control" id="corsScanAddress" placeholder="Enter address">
+                </div>
+                <button type="submit" class="btn btn-primary">Scan CORS</button>
+            </form>
+            <pre id="corsScanResult" class="result"></pre>
+        </div>
+
+        <div id="jsonUploadForm" class="utility-form">
+            <form id="jsonUploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="jsonFile">Upload JSON file</label>
+                    <input type="file" class="form-control" id="jsonFile" accept=".json">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="uploadJson()">Upload</button>
+            </form>
+            <pre id="jsonResult" class="result"></pre>
+        </div>
+
+        <div id="headersForm" class="utility-form">
+            <button class="btn btn-primary" onclick="runHeaders()">Show Headers</button>
+            <pre id="headersResult" class="result"></pre>
+        </div>
+    </div>
+</body>
+</html>
