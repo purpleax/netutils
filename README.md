@@ -22,7 +22,7 @@ network-utilities/: Root directory of your project.
     server.js: Your Node.js server script that handles backend logic and interactions with network utilities.
     package.json: Your Node.js project configuration file, created when you run npm init -y.
     node_modules/: Directory where your project's dependencies are installed, created when you run npm install.
-    
+
 Prerequisites:
 
 Create a new Node.js profect:
@@ -31,6 +31,7 @@ mkdir network-utilities
 cd network-utilities
 npm init -y
 npm install express body-parser
+npm install dns
 
 Run the server script: node server.js
 

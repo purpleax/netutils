@@ -4,6 +4,7 @@ const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
 const { exec } = require('child_process');
+const dns = require('dns').promises;
 
 const app = express();
 const port = 3000;
@@ -61,6 +62,49 @@ app.get('/headers', (req, res) => {
         headers: headers,
         sourceIp: sourceIp
     });
+});
+
+app.post('/dns-lookup', async (req, res) => {
+    const address = req.body.address;
+    const recordType = req.body.recordType.toUpperCase();
+
+    try {
+        let result;
+        switch (recordType) {
+            case 'A':
+                result = await dns.resolve4(address);
+                break;
+            case 'AAAA':
+                result = await dns.resolve6(address);
+                break;
+            case 'CNAME':
+                result = await dns.resolveCname(address);
+                break;
+            case 'MX':
+                result = await dns.resolveMx(address);
+                break;
+            case 'NS':
+                result = await dns.resolveNs(address);
+                break;
+            case 'TXT':
+                result = await dns.resolveTxt(address);
+                break;
+            default:
+                throw new Error('Invalid record type');
+        }
+        res.json({ result });
+    } catch (error) {
+        let errorMessage;
+        if (error.code === 'ENODATA') {
+            errorMessage = `No ${recordType} record found for ${address}`;
+        } else if (error.code === 'ENOTFOUND') {
+            errorMessage = `Domain ${address} not found`;
+        } else {
+            errorMessage = `Error performing DNS lookup: ${error.message}`;
+        }
+        console.error(`Error performing DNS lookup: ${error.message}`);
+        res.status(500).json({ error: errorMessage });
+    }
 });
 
 app.listen(port, () => {

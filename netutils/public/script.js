@@ -48,10 +48,52 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     window.runLookup = function() {
         const address = document.getElementById('lookupAddress').value;
-        const dnsServer = document.getElementById('dnsServer').value;
         const recordType = document.querySelector('input[name="recordType"]:checked').value;
-        document.getElementById('lookupResult').textContent = `Looking up ${address} with ${recordType} record...`;
+        fetch('/dns-lookup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ address: address, recordType: recordType })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(error => { throw new Error(error.error) });
+            }
+            return response.json();
+        })
+        .then(result => {
+            const formattedResult = formatDnsResult(result.result, recordType);
+            document.getElementById('lookupResult').textContent = formattedResult;
+        })
+        .catch(error => {
+            document.getElementById('lookupResult').textContent = `Error: ${error.message}`;
+        });
     };
+
+    function formatDnsResult(result, recordType) {
+        let output = `DNS Lookup Result for ${recordType} Record:\n\n`;
+        if (Array.isArray(result)) {
+            result.forEach((record, index) => {
+                output += `Record ${index + 1}:\n`;
+                if (typeof record === 'object') {
+                    for (const [key, value] of Object.entries(record)) {
+                        output += `${key}: ${value}\n`;
+                    }
+                } else {
+                    output += `${record}\n`;
+                }
+                output += '\n';
+            });
+        } else if (typeof result === 'object') {
+            for (const [key, value] of Object.entries(result)) {
+                output += `${key}: ${value}\n`;
+            }
+        } else {
+            output += `${result}\n`;
+        }
+        return output;
+    }
 
     window.runWafLookup = function() {
         const address = document.getElementById('wafLookupAddress').value;
