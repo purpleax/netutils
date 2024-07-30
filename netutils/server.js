@@ -46,21 +46,15 @@ app.post('/nmap', (req, res) => {
     const flags = req.body.flags;
     exec(`nmap ${flags} ${address}`, (error, stdout, stderr) => {
         if (error) {
-            console.error(`Error: ${stderr}`);
-            res.status(500).send(stderr);
+            if (stderr.includes('requires root privileges')) {
+                res.status(500).send('Error: This Nmap option requires root privileges. Please run with elevated privileges.');
+            } else {
+                console.error(`Error: ${stderr}`);
+                res.status(500).send(stderr);
+            }
             return;
         }
         res.send(stdout);
-    });
-});
-
-app.get('/headers', (req, res) => {
-    const headers = req.headers;
-    const sourceIp = req.ip;
-
-    res.json({
-        headers: headers,
-        sourceIp: sourceIp
     });
 });
 
@@ -105,6 +99,16 @@ app.post('/dns-lookup', async (req, res) => {
         console.error(`Error performing DNS lookup: ${error.message}`);
         res.status(500).json({ error: errorMessage });
     }
+});
+
+app.get('/headers', (req, res) => {
+    const headers = req.headers;
+    const sourceIp = req.ip;
+
+    res.json({
+        headers: headers,
+        sourceIp: sourceIp
+    });
 });
 
 app.listen(port, () => {
