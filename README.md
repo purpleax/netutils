@@ -11,7 +11,7 @@ network-utilities/
 │   ├── script.js
 ├── server.js
 ├── package.json
-└── node_modules/
+└── node_module/
 
 network-utilities/: Root directory of your project.
 
