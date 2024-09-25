@@ -48,52 +48,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     window.runLookup = function() {
         const address = document.getElementById('lookupAddress').value;
+        const dnsServer = document.getElementById('dnsServer').value;
         const recordType = document.querySelector('input[name="recordType"]:checked').value;
-        fetch('/dns-lookup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ address: address, recordType: recordType })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(error => { throw new Error(error.error) });
-            }
-            return response.json();
-        })
-        .then(result => {
-            const formattedResult = formatDnsResult(result.result, recordType);
-            document.getElementById('lookupResult').textContent = formattedResult;
-        })
-        .catch(error => {
-            document.getElementById('lookupResult').textContent = `Error: ${error.message}`;
-        });
+        document.getElementById('lookupResult').textContent = `Looking up ${address} with ${recordType} record...`;
     };
-
-    function formatDnsResult(result, recordType) {
-        let output = `DNS Lookup Result for ${recordType} Record:\n\n`;
-        if (Array.isArray(result)) {
-            result.forEach((record, index) => {
-                output += `Record ${index + 1}:\n`;
-                if (typeof record === 'object') {
-                    for (const [key, value] of Object.entries(record)) {
-                        output += `${key}: ${value}\n`;
-                    }
-                } else {
-                    output += `${record}\n`;
-                }
-                output += '\n';
-            });
-        } else if (typeof result === 'object') {
-            for (const [key, value] of Object.entries(result)) {
-                output += `${key}: ${value}\n`;
-            }
-        } else {
-            output += `${result}\n`;
-        }
-        return output;
-    }
 
     window.runWafLookup = function() {
         const address = document.getElementById('wafLookupAddress').value;
@@ -113,6 +71,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     };
 
+    window.runCorsScan = function() {
+        const address = document.getElementById('corsScanAddress').value;
+        document.getElementById('corsScanResult').textContent = `Scanning CORS for ${address}...`;
+    };
+
     window.uploadJson = function() {
         const fileInput = document.getElementById('jsonFile');
         const file = fileInput.files[0];
@@ -125,6 +88,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         reader.readAsText(file);
     };
+
+window.convertUnixTime = function() {
+    const minutes = document.getElementById('timeInput').value;
+
+    // Get the current time in seconds (Unix time), then round it down to the nearest minute
+    const currentTime = Math.floor(Date.now() / 1000);
+    const currentTimeRounded = Math.floor(currentTime / 60) * 60; // Remove seconds
+
+    // Calculate "From Time" - current time minus the number of minutes entered by the user (rounded to the minute)
+    const fromTime = currentTimeRounded - (minutes * 60);
+
+    // Calculate "Until Time" - current time minus 5 minutes (rounded to the minute)
+    const untilTime = currentTimeRounded - (5 * 60);
+
+    // Display the results
+    document.getElementById('unixTimeResult').textContent = 
+        `From Time (Unix Timestamp): ${fromTime}\nUntil Time (Unix Timestamp): ${untilTime}`;
+};
+
+
+
 
     window.runHeaders = function() {
         fetch('/headers')

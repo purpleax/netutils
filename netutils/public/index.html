@@ -50,6 +50,8 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="utilitiesDropdown">
                         <a class="dropdown-item" href="#" onclick="showUtility('jsonUpload')">JSON Upload</a>
+                        <!-- Added Unix Time Converter Menu Item -->
+                        <a class="dropdown-item" href="#" onclick="showUtility('unixTime')">Unix Time Converter</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -157,6 +159,18 @@
                 <button type="button" class="btn btn-primary" onclick="uploadJson()">Upload</button>
             </form>
             <pre id="jsonResult" class="result"></pre>
+        </div>
+
+        <!-- Unix Time Converter Form -->
+        <div id="unixTimeForm" class="utility-form">
+            <form onsubmit="convertUnixTime(); return false;">
+                <div class="form-group">
+                    <label for="timeInput">Enter time in minutes</label>
+                    <input type="number" class="form-control" id="timeInput" placeholder="Enter minutes">
+                </div>
+                <button type="submit" class="btn btn-primary">Convert to Unix Time</button>
+            </form>
+            <pre id="unixTimeResult" class="result"></pre>
         </div>
 
         <div id="headersForm" class="utility-form">
